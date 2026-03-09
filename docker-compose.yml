@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  # Redis Cache
+  redis:
+    image: redis:latest
+    container_name: redis_cache
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - whatsapp_queue_network
+
+# Persistent Volumes
+volumes:
+  redis_data:
+
+# Docker Network
+networks:
+  whatsapp_queue_network:
+    driver: bridge
