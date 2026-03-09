@@ -1,0 +1,187 @@
+# WhatsAppQueue API
+
+This project is a Node.js backend application built using TypeScript, designed to integrate with WhatsApp Web running locally. It exposes a structured RESTful API, handles authentication via QR code, and sends messages programmatically. The application emphasizes clean architecture, modularity, error handling, logging, rate limiting, and concurrency management, making it production-ready and scalable.
+
+---
+
+## 🏗 Architecture Overview
+
+The system is organized into modular layers:
+
+- **Controllers**: Handle incoming HTTP requests and send responses (`src/app/controllers`).
+- **Services**: Business logic for WhatsApp integration and messaging (`src/app/services`).
+- **Routes**: Define REST endpoints (`src/app/routes`).
+- **Queue**: Manages message enqueueing and processing (`src/app/queue`).
+- **Middlewares**: Validation, rate limiting, error handling and not-found handling (`src/app/middlewares`).
+- **Utils & Helpers**: Shared utilities like logging and error classes (`src/app/utils`, `src/app/helpers`).
+- **Redis**: Connection and persistence layer for queues and sessions (`src/app/redis`).
+- **Sockets**: Real-time events via Socket.IO (`src/app/sockets`).
+
+> The architecture promotes separation of concerns and supports easy testing and scaling.
+
+
+## 📦 Features
+
+- QR code authentication for WhatsApp Web
+- Real-time QR transmission over Socket.IO
+- Session persistence to avoid repeated logins
+- Automatic reconnection handling
+- REST API for sending messages to phone numbers
+- Request validation, rate limiting, and error handling
+- Concurrent requests support with queue management
+- Centralized logging and modular structure
+
+---
+
+## ⚙️ Setup Instructions
+
+1. **Clone repository**
+   ```bash
+   git clone https://github.com/developersajadur/whatsapp-queue-api.git
+   cd "whatsapp-queue-api"
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+   Create a `.env` file in the project root with the following entries:
+   ```env
+   PORT=5000
+   REDIS_URL=redis://localhost:6379
+   WHATSAPP_SESSION_PATH=./session
+   RATE_LIMIT_WINDOW_MS=60000
+   RATE_LIMIT_MAX_REQUESTS=100
+   ```
+   Adjust values as needed.
+
+4. **Run Redis**
+   Ensure a Redis instance is running (local or docker). Example using Docker:
+   ```bash
+   docker run -d --name whatsapp-redis -p 6379:6379 redis
+   ```
+
+5. **Start the server**
+   ```bash
+   npm run start:dev
+   ```
+   The API will listen on the configured `PORT`.
+
+---
+
+## 🔑 Environment Variables
+
+| Variable                 | Description                                   | Example                     |
+|--------------------------|-----------------------------------------------|-----------------------------|
+| `PORT`                  | HTTP server port                               | `5000`                      |
+| `REDIS_URL`             | Connection string for Redis                    | `redis://localhost:6379`    |
+| `WHATSAPP_SESSION_PATH` | Directory to store session data                | `./session`                 |
+| `RATE_LIMIT_WINDOW_MS`  | Time window for rate limiting in milliseconds  | `60000`                     |
+| `RATE_LIMIT_MAX_REQUESTS`| Max requests per window for rate limiting     | `100`                       |
+
+---
+
+## 🚀 Demo Steps
+
+1. **Open the client**
+   - Use Socket.IO client (e.g., browser) to connect to `http://localhost:5000`.
+
+2. **Authenticate via QR**
+   - On startup, the server generates a QR code for WhatsApp login.
+   - The QR is emitted via Socket.IO event (`qr`) to connected clients.
+   - Scan the QR using the WhatsApp mobile app.
+
+3. **Session Persistence**
+   - Once authenticated, the session is stored on disk.
+   - Restarting the server reuses the session to avoid re-scanning.
+
+4. **Send a Message via API**
+   - POST to `/api/v1/messages` with JSON payload:
+     ```json
+     {
+       "to": "1234567890",
+       "message": "Hello from WhatsAppQueue!"
+     }
+     ```
+   - The controller validates input, queues the job, and responds with success or error.
+   - Queue worker processes the job and sends the message via the active WhatsApp session.
+
+5. **Observe Real-Time Feedback**
+   - Socket events (`message:sent`, `message:error`) can be emitted for updates.
+
+---
+
+## 🧩 API Example
+
+### **Send Message**
+
+**Endpoint**: `POST /api/v1/messages`
+
+**Request Body**:
+```json
+{
+  "to": "<phone_number_without_plus>",
+  "message": "Your message text"
+}
+```
+
+**Success Response (200)**:
+```json
+{
+  "success": true,
+  "message": "Message queued for delivery",
+  "data": null
+}
+```
+
+**Error Response (4xx/5xx)**:
+```json
+{
+  "success": false,
+  "message": "Validation error: 'to' is required",
+  "errors": [
+    {
+      "field": "to",
+      "issue": "required"
+    }
+  ]
+}
+```
+
+---
+
+## 📁 Project Structure
+```
+src/
+  app.ts                # Entry point
+  server.ts             # HTTP/Socket server initialization
+  app/
+    config/
+    controllers/
+    errors/
+    globalTypes/
+    helpers/
+    middlewares/
+    queue/
+    redis/
+    routes/
+    services/
+    sockets/
+    utils/
+    validators/
+```
+
+---
+
+## ✅ Production Readiness
+
+- Organized codebase for maintainability
+- Environment-based configurations
+- Rate limiting and validation to prevent abuse
+- Queue system for managing concurrency
+- Session persistence and reconnection for reliability
+- Structured logging for observability
+
+---
