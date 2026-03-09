@@ -38,7 +38,7 @@ The system is organized into modular layers:
 1. **Clone repository**
    ```bash
    git clone https://github.com/developersajadur/whatsapp-queue-api.git
-   cd "whatsapp-queue-api"
+   cd whatsapp-queue-api
    ```
 
 2. **Install dependencies**
@@ -47,11 +47,15 @@ The system is organized into modular layers:
    ```
 
 3. **Configure environment variables**
-   Create a `.env` file in the project root with the following entries:
+   Create a `.env` file in the project root with the following entries (example based on your environment):
    ```env
+   NODE_ENV=development
+
    PORT=5000
-   REDIS_URL=redis://localhost:6379
-   WHATSAPP_SESSION_PATH=./session
+
+   REDIS_HOST=localhost
+   REDIS_PORT=6379
+
    RATE_LIMIT_WINDOW_MS=60000
    RATE_LIMIT_MAX_REQUESTS=100
    ```
@@ -75,11 +79,12 @@ The system is organized into modular layers:
 
 | Variable                 | Description                                   | Example                     |
 |--------------------------|-----------------------------------------------|-----------------------------|
-| `PORT`                  | HTTP server port                               | `5000`                      |
-| `REDIS_URL`             | Connection string for Redis                    | `redis://localhost:6379`    |
-| `WHATSAPP_SESSION_PATH` | Directory to store session data                | `./session`                 |
-| `RATE_LIMIT_WINDOW_MS`  | Time window for rate limiting in milliseconds  | `60000`                     |
-| `RATE_LIMIT_MAX_REQUESTS`| Max requests per window for rate limiting     | `100`                       |
+| `NODE_ENV`              | Application environment                         | `development`               |
+| `PORT`                  | HTTP server port                                | `5000`                      |
+| `REDIS_HOST`            | Redis hostname                                  | `localhost`                 |
+| `REDIS_PORT`            | Redis port                                      | `6379`                      |
+| `RATE_LIMIT_WINDOW_MS`  | Time window for rate limiting in milliseconds   | `60000`                     |
+| `RATE_LIMIT_MAX_REQUESTS`| Max requests per window for rate limiting      | `100`                       |
 
 ---
 

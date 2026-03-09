@@ -10,4 +10,8 @@ export default {
     host: process.env.REDIS_HOST,
     port: Number(process.env.REDIS_PORT),
   },
+  rateLimit: {
+    windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS),
+    max: Number(process.env.RATE_LIMIT_MAX_REQUESTS),
+  },
 };
