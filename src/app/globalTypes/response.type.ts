@@ -8,7 +8,7 @@ export type TMeta = {
 export type TResponse<T> = {
   statusCode: number;
   success: boolean;
-  message?: string;
+  message: string;
+  data?: T;
   meta?: TMeta;
-  data: T;
 };

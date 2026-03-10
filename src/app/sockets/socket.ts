@@ -4,11 +4,17 @@ import logger from '../utils/logger';
 
 export const setupSocket = (server: HttpServer) => {
   const io = new Server(server, {
-    cors: { origin: '*' },
+    cors: {
+      origin: '*',
+      methods: ['GET', 'POST'],
+    },
   });
 
   io.on('connection', (socket) => {
-    logger.log('Client connected', socket.id);
+    logger.info(`Client connected: ${socket.id}`);
+  });
+  io.on('disconnect', (socket) => {
+    logger.info(`Client disconnected: ${socket.id}`);
   });
 
   return io;

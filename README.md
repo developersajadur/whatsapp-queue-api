@@ -57,7 +57,7 @@ The system is organized into modular layers:
    REDIS_PORT=6379
 
    RATE_LIMIT_WINDOW_MS=60000
-   RATE_LIMIT_MAX_REQUESTS=100
+   RATE_LIMIT_MAX_REQUESTS=50
    ```
    Adjust values as needed.
 
@@ -84,7 +84,7 @@ The system is organized into modular layers:
 | `REDIS_HOST`            | Redis hostname                                  | `localhost`                 |
 | `REDIS_PORT`            | Redis port                                      | `6379`                      |
 | `RATE_LIMIT_WINDOW_MS`  | Time window for rate limiting in milliseconds   | `60000`                     |
-| `RATE_LIMIT_MAX_REQUESTS`| Max requests per window for rate limiting      | `100`                       |
+| `RATE_LIMIT_MAX_REQUESTS`| Max requests per window for rate limiting      | `50`                       |
 
 ---
 
@@ -103,7 +103,7 @@ The system is organized into modular layers:
    - Restarting the server reuses the session to avoid re-scanning.
 
 4. **Send a Message via API**
-   - POST to `/api/v1/messages` with JSON payload:
+   - POST to `/api/v1/messages/send` with JSON payload:
      ```json
      {
        "to": "1234567890",
@@ -122,7 +122,7 @@ The system is organized into modular layers:
 
 ### **Send Message**
 
-**Endpoint**: `POST /api/v1/messages`
+**Endpoint**: `POST /api/v1/messages/send`
 
 **Request Body**:
 ```json

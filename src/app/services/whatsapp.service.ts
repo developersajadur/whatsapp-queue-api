@@ -45,17 +45,19 @@ class WhatsAppService {
   }
 
   async sendMessage(phone: string, message: string) {
-    if (!this.client) {
-      throw new Error('WhatsApp client not initialized');
+    if (!this.client || !this.client.info) {
+      throw new Error('WhatsApp client not ready');
     }
 
-    const formattedPhone = phone.replace('+', '');
+    const formattedPhone = phone.replace(/\D/g, '');
 
-    const chatId = formattedPhone.includes('@c.us')
-      ? formattedPhone
-      : `${formattedPhone}@c.us`;
+    const numberId = await this.client.getNumberId(formattedPhone);
 
-    return this.client.sendMessage(chatId, message);
+    if (!numberId) {
+      throw new Error('Phone number not registered on WhatsApp');
+    }
+
+    return this.client.sendMessage(numberId._serialized, message);
   }
 }
 

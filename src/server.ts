@@ -5,6 +5,7 @@ import config from './app/config';
 import { whatsappService } from './app/services/whatsapp.service';
 import logger from './app/utils/logger';
 import './app/queue/message.worker';
+import { setupSocket } from './app/sockets/socket';
 
 const port = config.port;
 
@@ -14,13 +15,8 @@ async function main() {
   // create HTTP server
   server = createServer(app);
 
-  // initialize socket.io
-  const io = new IOServer(server, {
-    cors: {
-      origin: '*',
-      methods: ['GET', 'POST'],
-    },
-  });
+  // socket init
+  const io = setupSocket(server);
 
   // initialize WhatsApp client
   whatsappService.initialize(io);
