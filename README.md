@@ -140,17 +140,7 @@ If tests fail due to environment differences, ensure `testSetup.ts` is present o
 
 ---
 
-## Contributing / Development Notes
 
-- To add tests that interact with workers or sockets, prefer mocking external libraries (`bullmq`, `whatsapp-web.js`, `ioredis`) in `src/__tests__/testSetup.ts`.
-- For production deployments, consider:
-  - Using a log shipper or JSON format for file transports
-  - Centralized credentials and secrets (Vault, environment manager)
-  - Monitoring queue length and worker health
-
----
-
-If you'd like, I can add a CONTRIBUTING.md, expand tests (workers, retry/backoff, socket events), or add CI steps to run tests and linting.
 # WhatsAppQueue API
 
 This project is a Node.js backend application built using TypeScript, designed to integrate with WhatsApp Web running locally. It exposes a structured RESTful API, handles authentication via QR code, and sends messages programmatically. The application emphasizes clean architecture, modularity, error handling, logging, rate limiting, and concurrency management, making it production-ready and scalable.
@@ -315,6 +305,7 @@ The system is organized into modular layers:
 src/
   app.ts                # Entry point
   server.ts             # HTTP/Socket server initialization
+  __tests__/            # vitest test cases
   app/
     config/
     controllers/
