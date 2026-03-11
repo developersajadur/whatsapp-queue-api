@@ -1,148 +1,5 @@
 # WhatsAppQueue API
 
-A Node.js + TypeScript backend that integrates with WhatsApp Web to queue and send messages. It exposes a REST API, emits QR and status events over Socket.IO, and is built with production-ready concerns in mind: structured logging, validation, rate limiting, and queue-based concurrency.
-
----
-
-## Architecture Overview
-
-- **Controllers**: HTTP handlers (`src/app/controllers`).
-- **Services**: Business logic for WhatsApp integration (`src/app/services`).
-- **Routes**: REST endpoints (`src/app/routes`).
-- **Queue**: Job enqueueing and workers (`src/app/queue`).
-- **Middlewares**: Validation, rate limiting, request logging, error handling (`src/app/middlewares`).
-- **Redis**: Connection for queue/session (`src/app/redis`).
-- **Sockets**: Real-time events via Socket.IO (`src/app/sockets`).
-- **Utils**: Logging, helpers (`src/app/utils`, `src/app/helpers`).
-
----
-
-## Features
-
-- QR code authentication for WhatsApp Web (emitted via Socket.IO)
-- Session persistence and automatic reconnection handling
-- REST endpoint to queue messages, processed by a worker
-- Queue retries with exponential backoff
-- Centralized logging with Winston (console colors, timestamps, file transports) and Morgan -> Winston request logging
-- Validation with Zod and structured error responses
-- Rate limiting middleware to prevent abuse
-- Tests with Vitest and Supertest (mocks for external services)
-
----
-
-## Getting Started
-
-1. Clone
-```bash
-git clone <repo-url>
-cd whatsapp-queue-api
-```
-
-2. Install
-```bash
-npm install
-```
-
-3. Environment
-Create a `.env` file in the project root. Example:
-```env
-NODE_ENV=development
-PORT=5000
-REDIS_HOST=localhost
-REDIS_PORT=6379
-RATE_LIMIT_WINDOW_MS=60000
-RATE_LIMIT_MAX_REQUESTS=50
-```
-
-4. Run Redis (if you run the full app)
-```bash
-docker run -d --name whatsapp-redis -p 6379:6379 redis
-```
-
-5. Create logs directory (optional)
-```bash
-mkdir -p logs
-```
-
-6. Start (dev)
-```bash
-npm run start:dev
-```
-
----
-
-## Logging
-
-- The app uses `winston` configured with:
-  - Timestamps (YYYY-MM-DD HH:mm:ss)
-  - Colored console output in development
-  - File transports: `logs/error.log` (errors) and `logs/combined.log` (all levels)
-  - `errors({ stack: true })` to include stack traces in logs
-- HTTP request logging is done with `morgan` piped into the Winston stream; logs include method, url, status, response-time, and request body.
-
-If you change file paths, update `src/app/utils/logger.ts` accordingly.
-
----
-
-## API
-
-### POST /api/v1/messages/send
-
-Request body (JSON):
-
-```json
-{
-  "phone": "1234567890",
-  "message": "Hello from WhatsAppQueue!"
-}
-```
-
-Validation expects `phone` (string, min length 10) and `message` (non-empty string).
-
-Response on success:
-
-```json
-{
-  "success": true,
-  "statusCode": 200,
-  "message": "Message queued successfully",
-  "data": { "jobId": "..." }
-}
-```
-
----
-
-## Tests
-
-- Tests are written with Vitest and Supertest. A global setup file `src/__tests__/testSetup.ts` mocks `bullmq` and stubs the rate limiter so tests run without Redis or external services.
-- `vitest.config.ts` is configured to load that setup file automatically.
-
-Run tests:
-```bash
-npm test
-```
-
-Run a single test file or watch mode:
-```bash
-npx vitest src/__tests__/api.test.ts --watch
-```
-
-If tests fail due to environment differences, ensure `testSetup.ts` is present or run Vitest with the project config.
-
----
-
-## Scripts
-
-- `npm run start:dev` — start server in development with ts-node-dev
-- `npm run build` — compile TypeScript (tsc)
-- `npm test` — run Vitest
-- `npm run lint` / `npm run format` — linting/formatting
-
----
-
-
-# WhatsAppQueue API
-
 This project is a Node.js backend application built using TypeScript, designed to integrate with WhatsApp Web running locally. It exposes a structured RESTful API, handles authentication via QR code, and sends messages programmatically. The application emphasizes clean architecture, modularity, error handling, logging, rate limiting, and concurrency management, making it production-ready and scalable.
 
 ---
@@ -261,6 +118,21 @@ The system is organized into modular layers:
 
 ---
 
+
+## Logging
+
+- The app uses `winston` configured with:
+  - Timestamps (YYYY-MM-DD HH:mm:ss)
+  - Colored console output in development
+  - File transports: `logs/error.log` (errors) and `logs/combined.log` (all levels)
+  - `errors({ stack: true })` to include stack traces in logs
+- HTTP request logging is done with `morgan` piped into the Winston stream; logs include method, url, status, response-time, and request body.
+
+If you change file paths, update `src/app/utils/logger.ts` accordingly.
+
+---
+
+
 ## 🧩 API Example
 
 ### **Send Message**
@@ -279,8 +151,7 @@ The system is organized into modular layers:
 ```json
 {
   "success": true,
-  "message": "Message queued for delivery",
-  "data": null
+  "message": "Message queued successfully"
 }
 ```
 
@@ -297,6 +168,34 @@ The system is organized into modular layers:
   ]
 }
 ```
+
+---
+
+## Tests
+
+- Tests are written with Vitest and Supertest. A global setup file `src/__tests__/testSetup.ts` mocks `bullmq` and stubs the rate limiter so tests run without Redis or external services.
+- `vitest.config.ts` is configured to load that setup file automatically.
+
+Run tests:
+```bash
+npm test
+```
+
+Run a single test file or watch mode:
+```bash
+npx vitest src/__tests__/api.test.ts --watch
+```
+
+If tests fail due to environment differences, ensure `testSetup.ts` is present or run Vitest with the project config.
+
+---
+
+## Scripts
+
+- `npm run start:dev` — start server in development with ts-node-dev
+- `npm run build` — compile TypeScript (tsc)
+- `npm test` — run Vitest
+- `npm run lint` / `npm run format` — linting/formatting
 
 ---
 
