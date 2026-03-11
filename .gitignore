@@ -2,7 +2,6 @@ node_modules
 coverage
 .env
 dist
-.vercel
 .wwebjs_cache
 .wwebjs_auth
 logs

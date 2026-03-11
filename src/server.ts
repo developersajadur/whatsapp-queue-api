@@ -1,5 +1,4 @@
 import { createServer, Server as HttpServer } from 'http';
-import { Server as IOServer } from 'socket.io';
 import app from './app';
 import config from './app/config';
 import { whatsappService } from './app/services/whatsapp.service';

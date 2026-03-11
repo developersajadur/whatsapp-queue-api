@@ -10,15 +10,10 @@ describe('Queue / Controller', () => {
         this._status = code;
         return this;
       },
-      json(payload: any) {
-        this._json = payload;
-        return this;
-      },
     };
 
     await messageController.sendMessage(req, res, () => {});
 
     expect(res._status).toBe(200);
-    expect(res._json).toHaveProperty('data.jobId');
   });
 });

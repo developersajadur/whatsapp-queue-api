@@ -5,7 +5,7 @@ import status from 'http-status';
 
 export class MessageController {
   sendMessage = catchAsync(async (req, res) => {
-    const job = await messageQueue.add('send-message', req.body, {
+    await messageQueue.add('send-message', req.body, {
       attempts: 5,
       backoff: {
         type: 'exponential',
@@ -18,9 +18,6 @@ export class MessageController {
       success: true,
       message: 'Message queued successfully',
       statusCode: status.OK,
-      data: {
-        jobId: job.id,
-      },
     });
   });
 }

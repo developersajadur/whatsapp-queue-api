@@ -11,7 +11,6 @@ describe('API', () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('success', true);
-    expect(res.body.data).toHaveProperty('jobId');
   });
 
   it('POST invalid payload returns error', async () => {
